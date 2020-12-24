@@ -1,13 +1,19 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <Layout></Layout>
   </div>
 </template>
-
+<script lang="ts">
+import Vue from "vue";
+import { Component } from "vue-property-decorator";
+import Layout from "./views/layout/layout.vue";
+@Component({
+  components: {
+    Layout,
+  },
+})
+export default class App extends Vue {}
+</script>
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
