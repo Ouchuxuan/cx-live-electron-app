@@ -13,6 +13,9 @@
   "main": "background.js",
   "dependencies": {
     "core-js": "^3.6.5",
+    "ffmpeg-static": "^4.2.7",
+    "ffprobe-static": "^3.0.0",
+    "fluent-ffmpeg": "^2.1.2",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.6",
     "vue-property-decorator": "^9.1.2",
@@ -33,6 +36,5 @@
     "typescript": "~3.9.3",
     "vue-cli-plugin-electron-builder": "~2.0.0-rc.5",
     "vue-template-compiler": "^2.6.11"
-  },
-  "__npminstall_done": false
+  }
 }
