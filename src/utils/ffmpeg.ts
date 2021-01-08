@@ -1,2 +1,3 @@
 import FfmpegCommand from 'fluent-ffmpeg'
-const command = new FfmpegCommand();
+import ffmpegPath from 'ffmpeg-static'
+FfmpegCommand.setFfmpegPath(ffmpegPath);

@@ -27,6 +27,9 @@ export default class Layout extends Vue {
         setTimeout(() => {
             this.openScan();
         }, 3000);
+
+
+        
       
     });
   }
