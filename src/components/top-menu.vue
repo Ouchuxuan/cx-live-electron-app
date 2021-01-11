@@ -7,6 +7,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { ipcRenderer } from "electron";
+@Component
 export default class TopMenu extends Vue {
 	handleExitClick() {
 		ipcRenderer.send("quitApp");

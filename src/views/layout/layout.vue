@@ -3,11 +3,11 @@
 		<div class="header">
 			<top-menu />
 		</div>
-		<!-- <router-view /> -->
+		<router-view />
 	</div>
 </template>
 <script lang="ts">
-import TopMenu from "@/components/top-menu/top-menu.vue";
+import TopMenu from "@/components/top-menu.vue";
 import { Component, Vue } from "vue-property-decorator";
 @Component({
 	components: {
