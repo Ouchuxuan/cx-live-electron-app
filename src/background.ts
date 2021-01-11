@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 // import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -11,14 +11,16 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
+let mainWin:BrowserWindow
 async function createWindow() {
   // Create the browser window.
-  const win = new BrowserWindow({
+  mainWin = new BrowserWindow({
     width: 1366,
     height: 768,
     frame: false,
     resizable: true,
     title: 'livePlayer',
+    minimizable:true,
     webPreferences: {
       webSecurity: true,
       contextIsolation: false,
@@ -29,14 +31,14 @@ async function createWindow() {
   })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
-    console.log('WEBPACK_DEV_SERVER_URL', process.env.WEBPACK_DEV_SERVER_URL)
+    // console.log('WEBPACK_DEV_SERVER_URL', process.env.WEBPACK_DEV_SERVER_URL)
     // Load the url of the dev server if in development mode
-    await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
+    await mainWin.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+    if (!process.env.IS_TEST) mainWin.webContents.openDevTools()
   } else {
     createProtocol('app')
     // Load the index.html when not in development
-    win.loadURL('app://./index.html')
+    mainWin.loadURL('app://./index.html')
   }
 }
 
@@ -69,6 +71,12 @@ app.on('ready', async () => {
     }
   }
   createWindow()
+  ipcMain.on('quitApp', () => {
+    app.quit();
+  })
+  ipcMain.on('minimizeApp', () => {
+    mainWin.minimize()
+  })
 })
 
 // Exit cleanly on request from parent process in development mode.

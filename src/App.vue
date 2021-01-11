@@ -1,27 +1,22 @@
 <template>
-  <div id="app">
-    <Layout></Layout>
-  </div>
+	<div id="app">
+		<router-view />
+	</div>
 </template>
 <script lang="ts">
 import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import Layout from "./views/layout/layout.vue";
-@Component({
-  components: {
-    Layout,
-  },
-})
+@Component
 export default class App extends Vue {}
 </script>
 <style lang="scss">
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  width: 100%;
-  height: 100%;
+	font-family: Avenir, Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-align: center;
+	color: #2c3e50;
+	width: 100%;
+	height: 100%;
 }
 </style>

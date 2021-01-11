@@ -40,6 +40,15 @@ module.exports = {
       }
     }
   },
+  css: {
+    loaderOptions: {
+      // 给 sass-loader 传递选项
+      // 向所有 Sass 样式传入共享的全局变量
+      sass: {
+        prependData: `@import "@/style/variable.scss";`
+      }
+    }
+  },
   publicPath: './',
   devServer: {
     // can be overwritten by process.env.HOST
