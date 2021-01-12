@@ -16,6 +16,9 @@ const routes: Array<RouteConfig> = [
       }
     ]
   },
+  {
+    path:'/recodControl'
+  }
 ]
 
 const router = new VueRouter({

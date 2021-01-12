@@ -1,7 +1,8 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcMain } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain, Tray, Menu } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
+import { genAppTray } from '@/utils/mainprocess';
 // import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -11,27 +12,30 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
-let mainWin:BrowserWindow
-async function createWindow() {
+// 系统托盘
+let tray: Tray
+// 主窗口
+let mainWin: BrowserWindow
+// 录屏mini控制窗口
+let miniControlWin: BrowserWindow
+const createMainWindow = async () => {
   // Create the browser window.
   mainWin = new BrowserWindow({
     width: 1366,
     height: 768,
     frame: false,
     resizable: true,
-    title: 'livePlayer',
-    minimizable:true,
+    title: 'test',
+    minimizable: true,
     webPreferences: {
       webSecurity: true,
       contextIsolation: false,
-      // Use pluginOptions.nodeIntegration, leave this alone
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: !!process.env.ELECTRON_NODE_INTEGRATION
     }
   })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
-    // console.log('WEBPACK_DEV_SERVER_URL', process.env.WEBPACK_DEV_SERVER_URL)
+    console.log('WEBPACK_DEV_SERVER_URL', process.env.WEBPACK_DEV_SERVER_URL)
     // Load the url of the dev server if in development mode
     await mainWin.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
     if (!process.env.IS_TEST) mainWin.webContents.openDevTools()
@@ -42,42 +46,42 @@ async function createWindow() {
   }
 }
 
+const createControlWin = async () => {
+  miniControlWin = new BrowserWindow({
+    width: 200,
+    height: 50,
+    frame: false,
+    resizable: true,
+    title: 'miniControlBar',
+    webPreferences: {
+      webSecurity: true,
+      contextIsolation: false,
+      nodeIntegration: !!process.env.ELECTRON_NODE_INTEGRATION
+    }
+  })
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
+    // Load the url of the dev server if in development mode
+    await miniControlWin.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+  } else {
+    createProtocol('app')
+    // Load the index.html when not in development
+    miniControlWin.loadURL('app://./index.html')
+  }
+}
+
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  // Darwin 是一个由苹果公司（Apple Inc.）开发的 UNIX 操作系统
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
 
 app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  console.log('App:active')
+  if (BrowserWindow.getAllWindows().length === 0) createMainWindow()
 })
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', async () => {
-  if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
-    try {
-      // await installExtension(VUEJS_DEVTOOLS)
-    } catch (e) {
-      console.error('Vue Devtools failed to install:', e.toString())
-    }
-  }
-  createWindow()
-  ipcMain.on('quitApp', () => {
-    app.quit();
-  })
-  ipcMain.on('minimizeApp', () => {
-    mainWin.minimize()
-  })
-})
+
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
@@ -93,3 +97,35 @@ if (isDevelopment) {
     })
   }
 }
+
+app.whenReady().then(() => {
+  tray = genAppTray()
+  tray.on('click', () => {
+    mainWin.isMinimized() ? mainWin.restore() : mainWin.minimize()
+  })
+
+
+  if (isDevelopment && !process.env.IS_TEST) {
+    // Install Vue Devtools
+    try {
+      // await installExtension(VUEJS_DEVTOOLS)
+    } catch (e) {
+      console.error('Vue Devtools failed to install:', e.toString())
+    }
+  }
+  createMainWindow()
+  ipcMain.on('quitApp', () => {
+    app.quit();
+  })
+  ipcMain.on('minimizeApp', () => {
+    mainWin.minimize()
+  })
+  ipcMain.on('start:screen capture', () => {
+    console.log('start:screen capture')
+    mainWin.minimize()
+  })
+})
+  .catch(error => {
+    console.log(111111)
+    console.error(error)
+  })

@@ -11,7 +11,7 @@ module.exports = {
       template: "public/index.html",
       filename: "index.html",
       // template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
-      title: "livePlayer"
+      title: "test"
     }
   },
   pluginOptions: {
