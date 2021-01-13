@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack')
 
 function resolve(dir) {
   return path.join(__dirname, dir);
@@ -23,7 +24,16 @@ module.exports = {
         productName: "CXPlayer", // 项目名
         win: {
           // icon: 'build/icons/icon.ico',
-          target: 'nsis'
+          target: 'nsis',
+          "target": [
+            {
+              "target": "nsis",//利用nsis制作安装程序
+              "arch": [
+                "x64",//64位
+                "ia32"//32位
+              ]
+            }
+          ]
         },
         nsis: {
           oneClick: false, // 是否一键安装
@@ -38,7 +48,19 @@ module.exports = {
           // "include": "build/script/installer.nsh", // 包含的自定义nsis脚本 这个对于构建需求严格得安装过程相当有用。
         }
       }
-    }
+    },
+  },
+  configureWebpack: {
+    node: {
+      __dirname: process.env.NODE_ENV !== "production",
+      __filename: process.env.NODE_ENV !== "production"
+    },
+    plugins: [
+      new webpack.DefinePlugin({
+        // 解决fluent-ffmpeg的引入问题
+        'process.env.FLUENTFFMPEG_COV': false
+      })
+    ]
   },
   css: {
     loaderOptions: {
@@ -54,7 +76,7 @@ module.exports = {
     // can be overwritten by process.env.HOST
     host: '0.0.0.0',
     port: 8080,
-    https:true
+    https: true
   },
   chainWebpack: config => {
     config.resolve.alias

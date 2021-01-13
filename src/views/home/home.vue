@@ -10,7 +10,10 @@
 				@click="openScreenCaptrue"
 				>开启录屏</a-button
 			>
-			<a-button primary="default" class="btn live-push-button" @click="openLivePush"
+			<a-button
+				primary="default"
+				class="btn live-push-button"
+				@click="openLivePush"
 				>开启摄像头推流</a-button
 			>
 			<a-button primary="default" class="btn local-video-button"
@@ -27,7 +30,7 @@ import { Button } from "ant-design-vue";
 import { Component, Vue } from "vue-property-decorator";
 import VideoPlayer from "@/components/video-player.vue";
 import { ipcRenderer } from "electron";
-import FFmpegUtils from '@/utils/ffmpeg'
+import FFmpegUtils from "@/utils/ffmpeg";
 
 @Component({
 	components: {
@@ -37,11 +40,13 @@ import FFmpegUtils from '@/utils/ffmpeg'
 })
 export default class Home extends Vue {
 	openScreenCaptrue() {
-    ipcRenderer.send('start:screen capture')
+		ipcRenderer.send("start:screen capture");
+		FFmpegUtils.fullscreenRecording();
 	}
-	openLivePush(){
+	openLivePush() {
 		// 检测当前是否有摄像头
-		FFmpegUtils.checkCameraExist()
+		// FFmpegUtils.checkCameraExist();
+		FFmpegUtils.fullscreenRecording();
 	}
 	mounted() {}
 }
