@@ -19,11 +19,15 @@ class FFmpegUtils {
     })
   }
   static async fullscreenRecording() {
-    // ffmpeg -f gdigrab -i desktop -vcodec libx264 -preset:v ultrafast -tune:v zerolatency -f flv rtmp://eguid.cc:1935/rtmp/destop
-    const params = ['-f', 'gdigrab', '-i', 'desktop', '-vcodec', 'libx264', '-preset:v', 'ultrafast', '-tune:v', 'zerolatency', '-f', 'flv', appConfig.liveUrl]
-    // const params = ['-version']
+    // ffmpeg -f avfoundation -video_size 640x480 -framerate 30 -pixel_format uyvy422  
+    // -i "1" -vcodec libx264  -preset ultrafast -acodec libfaac -f flv rtmp://172.20.10.8/live/room101
+    const darwinParams = ['-f','avfoundation','-video_size','640x480','-framerate','30','-pixel_format','uyvy422',
+    '-i','1', '-vcodec','libx264', '-preset', 'ultrafast','-acodec','libfaac','-f','flv', appConfig.liveUrl]
+    const winParams = ['-f', 'gdigrab', '-i', 'desktop', '-vcodec', 'libx264', '-preset:v', 'ultrafast', '-tune:v', 'zerolatency', '-f', 'flv', appConfig.liveUrl]
+    let execParams;
+    process.platform === 'win32' ? execParams = winParams : execParams = darwinParams
     try {
-      const { stderr, stdout } = await execFilePro(FfmpegPath, params)
+      const { stderr, stdout } = await execFilePro(FfmpegPath, execParams)
       console.log(stdout)
     } catch (error) {
       // message.error(error.stderr)
